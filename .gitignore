@@ -1,0 +1,5 @@
+build
+.lock-waf*
+.waf-*
+bin
+test/pythonic
