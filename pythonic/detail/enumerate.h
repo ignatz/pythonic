@@ -14,26 +14,28 @@ namespace pythonic {
 namespace detail {
 
 template<typename Container>
-struct enum_pair_iter :
+struct enumerate_iterator :
 	public boost::iterator_facade<
-		enum_pair_iter<Container>,
+		enumerate_iterator<Container>,
 		std::pair<int, typename traits<Container>::reference>,
 		boost::incrementable_traversal_tag,
 		std::pair<int, typename traits<Container>::reference>
 	>
 {
 public:
-	enum_pair_iter(typename traits<Container>::iterator it, int const start = 0)
-		: it(it), cnt(start)
+	enumerate_iterator(
+		typename traits<Container>::iterator it,
+		int const start = 0)
+			: it(it), cnt(start)
 	{}
 
 private:
 	friend class boost::iterator_core_access;
 
-	typedef std::pair<int, typename traits<Container>::reference
-		> reference;
+	typedef std::pair<
+		int, typename traits<Container>::reference> reference;
 
-	bool equal(enum_pair_iter<Container> const& other) const
+	bool equal(enumerate_iterator<Container> const& other) const
 	{
 		return it == other.it;
 	}
@@ -62,24 +64,26 @@ private:
 	typedef typename std::remove_reference<Container>::type type;
 
 public:
+	typedef size_t size_type;
+	typedef enumerate_iterator<type> iterator;
+	typedef enumerate_iterator<typename
+		std::add_const<type>::type> const_iterator;
+	typedef type& reference;
+	typedef typename std::add_const<type>::type& const_reference;
+
 	template<typename T>
 	enumerate_proxy(T&& data, int const start = 0) :
 		container(std::forward<T>(data)), start(start)
 	{}
 
-	typename type::size_type size() const
+	enumerate_iterator<type> begin()
 	{
-		return container.size();
-	}
-
-	enum_pair_iter<type> begin()
-	{
-		return enum_pair_iter<type>(container.begin(), start);
+		return enumerate_iterator<type>(container.begin(), start);
 	};
 
-	enum_pair_iter<type> end()
+	enumerate_iterator<type> end()
 	{
-		return enum_pair_iter<type>(container.end(), -1);
+		return enumerate_iterator<type>(container.end(), -1);
 	};
 
 private:

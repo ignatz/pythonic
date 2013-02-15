@@ -4,9 +4,6 @@
 // Distributed under the terms of the GPLv2 or newer
 
 #include <type_traits>
-#include <tuple>
-
-#include <boost/iterator/iterator_facade.hpp>
 
 #include "pythonic/detail/enumerate.h"
 

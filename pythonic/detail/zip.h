@@ -16,26 +16,28 @@ namespace pythonic {
 namespace detail {
 
 template<typename ... Containers>
-struct zip_tuple_iter :
+struct zip_iterator :
 	public boost::iterator_facade<
-		zip_tuple_iter<Containers...>,
+		zip_iterator<Containers...>,
 		std::tuple<typename traits<Containers>::reference ...>,
 		boost::incrementable_traversal_tag,
 		std::tuple<typename traits<Containers>::reference ...>
 	>
 {
 public:
-	zip_tuple_iter(typename traits<Containers>::iterator ... its)
+	typedef std::tuple<typename
+		traits<Containers>::reference ...> reference;
+	typedef std::tuple<typename std::add_const<typename
+		traits<Containers>::reference>::type ...> const_reference;
+
+	zip_iterator(typename traits<Containers>::iterator ... its)
 		: its(its...)
 	{}
 
 private:
 	friend class boost::iterator_core_access;
 
-	typedef std::tuple<typename
-		traits<Containers>::reference ...> reference;
-
-	bool equal(zip_tuple_iter<Containers...> const& rhs) const
+	bool equal(zip_iterator<Containers...> const& rhs) const
 	{
 #ifdef PYTHONIC_SAFE_ZIP // safe_zip expects containers of equal length
 		return its == rhs.its;
@@ -68,7 +70,7 @@ private:
 
 	template<size_t ... Ns>
 	bool equal_helper(
-		zip_tuple_iter<Containers...> const& rhs,
+		zip_iterator<Containers...> const& rhs,
 		pack<Ns...> const&) const
 	{
 		return sum<size_t>(std::get<Ns>(its) == std::get<Ns>(rhs.its)...);
@@ -81,11 +83,15 @@ private:
 template<typename ... Containers>
 class zip_proxy
 {
-private:
-	typedef zip_tuple_iter<typename
-		std::remove_reference<Containers>::type...> iterator;
-
 public:
+	typedef size_t size_type;
+	typedef zip_iterator<typename
+		std::remove_reference<Containers>::type...> iterator;
+	typedef zip_iterator<typename std::add_const<typename
+		std::remove_reference<Containers>::type>::type ...> const_iterator;
+	typedef typename iterator::reference reference;
+	typedef typename iterator::const_reference const_reference;
+
 	template<typename ... Ts>
 	zip_proxy(Ts&& ... ts) :
 		containers(std::forward<Ts>(ts)...)

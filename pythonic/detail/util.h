@@ -32,5 +32,11 @@ Return sum(T const& t, Ts const& ... ts)
 	return t + sum<Return>(ts...);
 }
 
+template<typename T>
+int sign(T const t)
+{
+	return (t < T(0)) ? -1 : 1;
+}
+
 } // detail
 } // pythonic
