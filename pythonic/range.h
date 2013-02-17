@@ -9,12 +9,14 @@
 
 namespace pythonic {
 
+inline
 detail::range_proxy<int>
-range(int const end, int const step = 1)
+range(int const end)
 {
-	return detail::range_proxy<int>(0, end, step);
+	return detail::range_proxy<int>(0, end, 1);
 }
 
+inline
 detail::range_proxy<int>
 range(int const start, int const end, int const step = 1)
 {

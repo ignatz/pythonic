@@ -60,6 +60,30 @@ of the shortest container.
 In the example, two vectors are filled with the keys and values from a map.
 
 
+`range()`
+---------
+
+The functions `range(end)` and `range(start, end [, step])` can be used as
+iterateable representations of ranges.
+
+
+	#include <vector>
+	#include "pythonic/zip.h"
+	using namespace pythonic;
+	
+	// ...
+	
+	std::vector<int> vec = {324,5,435,12,3,23,4};
+	
+	for (auto const& v  : zip(range(vec.size()), vec))
+	{
+	  std::cout << std::get<0>(v) << " " << std::get<1>(v) << std::endl;
+	}
+	
+	// ...
+
+In this example, we implemented `enumerate()` by means of `range` and `zip`.
+
 Requirements
 ------------
 

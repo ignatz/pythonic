@@ -45,3 +45,20 @@ TEST(Range, Simple)
 		}
 	}
 }
+
+TEST(Range, Enumerate)
+{
+	std::vector<int> vec { 3,6,476,4,2,4,23,123,13,4,345,346,456 };
+
+	int const start = -1;
+	auto en = enumerate(vec, start).begin();
+	auto z  = zip(range(start, vec.size() + start), vec).begin();
+	for (size_t ii = 0; ii< vec.size() ; ++ii)
+	{
+		ASSERT_EQ(en->first, std::get<0>(*z));
+		ASSERT_EQ(en->second, std::get<1>(*z));
+
+		++en;
+		++z;
+	}
+}
