@@ -13,7 +13,9 @@ TEST(Zip, Simple)
 
 	for(auto v : zip(vec0, vec1)) {
 		ASSERT_EQ(42, std::get<0>(v));
+		ASSERT_EQ(42, v.first);  // special case for 2 containers
 		ASSERT_EQ( 5, std::get<1>(v));
+		ASSERT_EQ( 5, v.second); // special case for 2 containers
 	}
 }
 

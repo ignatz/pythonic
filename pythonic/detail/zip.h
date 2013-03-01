@@ -15,20 +15,34 @@
 namespace pythonic {
 namespace detail {
 
+// allow access via first & second if two containers are zipped
+template<typename ... T>
+struct zip_tuple
+{
+	typedef std::tuple<T...> type;
+};
+
+template<typename T0, typename T1>
+struct zip_tuple<T0, T1>
+{
+	typedef std::pair<T0, T1> type;
+};
+
+
 template<typename ... Containers>
 struct zip_iterator :
 	public boost::iterator_facade<
 		zip_iterator<Containers...>,
-		std::tuple<typename traits<Containers>::reference ...>,
+		typename zip_tuple<typename traits<Containers>::reference ...>::type,
 		boost::incrementable_traversal_tag,
-		std::tuple<typename traits<Containers>::reference ...>
+		typename zip_tuple<typename traits<Containers>::reference ...>::type
 	>
 {
 public:
-	typedef std::tuple<typename
-		traits<Containers>::reference ...> reference;
-	typedef std::tuple<typename std::add_const<typename
-		traits<Containers>::reference>::type ...> const_reference;
+	typedef typename zip_tuple<typename
+		traits<Containers>::reference ...>::type reference;
+	typedef typename zip_tuple<typename std::add_const<typename
+		traits<Containers>::reference>::type ...>::type const_reference;
 
 	zip_iterator(typename traits<Containers>::iterator ... its)
 		: its(its...)
@@ -76,7 +90,7 @@ private:
 		return sum<size_t>(std::get<Ns>(its) == std::get<Ns>(rhs.its)...);
 	}
 
-	std::tuple<typename traits<Containers>::iterator ...> its;
+	typename zip_tuple<typename traits<Containers>::iterator ...>::type its;
 };
 
 
